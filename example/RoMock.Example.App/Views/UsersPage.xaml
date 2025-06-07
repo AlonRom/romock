@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ContentPageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:base="clr-namespace:RoMock.Example.App.Views.Base"
+                       xmlns:controls="clr-namespace:RoMock.Example.App.Controls"
+                       x:Class="RoMock.Example.App.Views.UsersPage"
+                       Title="Users">
+    <Grid>
+        <CollectionView ItemsSource="{Binding Users}"
+                        Margin="10"
+                        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="15" Margin="8" BorderColor="Transparent">
+                        <Frame.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#E53935" Offset="0.0" />
+                                <GradientStop Color="#FF6F61" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Frame.Background>
+                        <VerticalStackLayout Padding="5"
+                                             Margin="0,0,0,10">
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="User ID: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Id}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="Name: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Name}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="Username: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Username}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="Email: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Email}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <VerticalStackLayout Margin="0,0,0,20">
+                                <Label Text="Address:" 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Address.Street}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Address.Suite}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Address.City}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Address.Zipcode}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </VerticalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="Phone: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Phone}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,0,0,20">
+                                <Label Text="Website: " 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Website}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <VerticalStackLayout Margin="0,0,0,20">
+                                <Label Text="Company:" 
+                                       FontSize="Medium" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Company.Name}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Company.CatchPhrase}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                                <Label Text="{Binding Company.Bs}" 
+                                       FontSize="Medium" 
+                                       TextColor="White"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:Loader IsLoading="{Binding IsLoading}" />
+    </Grid>
+</base:ContentPageBase>

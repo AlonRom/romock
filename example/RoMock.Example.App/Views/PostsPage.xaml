@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ContentPageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:base="clr-namespace:RoMock.Example.App.Views.Base"
+                       xmlns:controls="clr-namespace:RoMock.Example.App.Controls"
+                       x:Class="RoMock.Example.App.Views.PostsPage"
+                       Title="Posts">
+    <Grid>
+        <CollectionView ItemsSource="{Binding Posts}"
+                        Margin="10"
+                        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="15" Margin="8" BorderColor="Transparent">
+                        <Frame.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#4C8BF5" Offset="0.0" />
+                                <GradientStop Color="#78C4F8" Offset="1.0" /> 
+                            </LinearGradientBrush>
+                        </Frame.Background>
+                        <VerticalStackLayout Padding="5" 
+                                             Margin="0,0,0,10">
+                            <HorizontalStackLayout  Margin="0,0,0,20">
+                                <Label Text="User ID: " FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="{Binding UserId}" FontSize="Medium" TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout  Margin="0,0,0,20">
+                                <Label Text="Post ID: " FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="{Binding Id}" FontSize="Medium" TextColor="White"/>
+                            </HorizontalStackLayout>
+
+                            <VerticalStackLayout  Margin="0,0,0,20">
+                                <Label Text="Post Title:" FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="{Binding Title}" FontSize="Medium" TextColor="White"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout  Margin="0,0,0,20">
+                                <Label Text="Post Body:" FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="{Binding Body}" FontSize="Medium" TextColor="White"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:Loader IsLoading="{Binding IsLoading}" />
+    </Grid>
+</base:ContentPageBase>

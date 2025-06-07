@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ContentPageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:base="clr-namespace:RoMock.Example.App.Views.Base"
+                       xmlns:controls="clr-namespace:RoMock.Example.App.Controls"
+                       x:Class="RoMock.Example.App.Views.PostPage"
+                       Title="Post">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Frame CornerRadius="15" Margin="8" BorderColor="Transparent"
+               IsVisible="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}">
+            <Frame.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#8E24AA" Offset="0.0" />
+                    <GradientStop Color="#AB47BC" Offset="1.0" />
+                </LinearGradientBrush>
+            </Frame.Background>
+            <VerticalStackLayout Padding="5" 
+                                 Margin="0,0,0,10" >
+                <HorizontalStackLayout  Margin="0,0,0,20">
+                    <Label Text="User ID: " FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding Post.UserId}" FontSize="Medium" TextColor="White"/>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout  Margin="0,0,0,20">
+                    <Label Text="Post ID: " FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding Post.Id}" FontSize="Medium" TextColor="White"/>
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout  Margin="0,0,0,20">
+                    <Label Text="Post Title:" FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding Post.Title}" FontSize="Medium" TextColor="White"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout  Margin="0,0,0,20">
+                    <Label Text="Post Body:" FontSize="Medium" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding Post.Body}" FontSize="Medium" TextColor="White"/>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Frame>
+
+        <controls:Loader Grid.Row="1" IsLoading="{Binding IsLoading}" />
+    </Grid>
+</base:ContentPageBase>

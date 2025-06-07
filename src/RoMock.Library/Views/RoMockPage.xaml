@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:RoMock.Library.Controls"
+             x:Class="RoMock.Library.Views.RoMockPage"
+             Title="Mock Methods Page">
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <HorizontalStackLayout HeightRequest="30" VerticalOptions="Start">
+            <Switch HorizontalOptions="Start"
+                    IsToggled="{Binding UseRoMock}"
+                    VerticalOptions="Start"
+                    WidthRequest="45" />
+            <Label Text="Use Mock Apis"
+                   VerticalOptions="Center"
+                   VerticalTextAlignment="Center" />
+        </HorizontalStackLayout>
+
+        <!-- Content Grid shown when not loading and UseRoMock is toggled on -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Label with DataTrigger to control visibility -->
+            <Label Grid.Row="0"
+                   Margin="0,15,0,0"
+                   FontSize="26"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   Text="Select Mock Methods"
+                   TextColor="#512BD4">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Style.Triggers>
+                            <MultiTrigger TargetType="Label">
+                                <MultiTrigger.Conditions>
+                                    <BindingCondition Binding="{Binding UseRoMock}" Value="true" />
+                                    <BindingCondition Binding="{Binding IsLoading}" Value="false" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="IsVisible" Value="True" />
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <!-- Search Methods -->
+            <SearchBar Grid.Row="1" 
+                       Margin="0,10,0,10" 
+                       Placeholder="Search Methods" 
+                       Text="{Binding SearchMethodsString}">
+                <SearchBar.Style>
+                    <Style TargetType="SearchBar">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Style.Triggers>
+                            <MultiTrigger TargetType="SearchBar">
+                                <MultiTrigger.Conditions>
+                                    <BindingCondition Binding="{Binding UseRoMock}" Value="true" />
+                                    <BindingCondition Binding="{Binding IsLoading}" Value="false" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="IsVisible" Value="True" />
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </SearchBar.Style>
+            </SearchBar>
+
+            <!-- CollectionView with DataTrigger to control visibility -->
+            <CollectionView Grid.Row="2" ItemsSource="{Binding SearchResultMethods}">
+                <CollectionView.Style>
+                    <Style TargetType="CollectionView">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Style.Triggers>
+                            <MultiTrigger TargetType="CollectionView">
+                                <MultiTrigger.Conditions>
+                                    <BindingCondition Binding="{Binding UseRoMock}" Value="true" />
+                                    <BindingCondition Binding="{Binding IsLoading}" Value="false" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="IsVisible" Value="True" />
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </CollectionView.Style>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout>
+                            <Switch IsToggled="{Binding IsToggled}" />
+                            <Label Text="{Binding MethodName}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Button with DataTrigger to control visibility -->
+            <StackLayout Grid.Row="3">
+                <Button Command="{Binding SaveCommand}" Text="Save">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsVisible" Value="False" />
+                            <Style.Triggers>
+                                <MultiTrigger TargetType="Button">
+                                    <MultiTrigger.Conditions>
+                                        <BindingCondition Binding="{Binding UseRoMock}" Value="true" />
+                                        <BindingCondition Binding="{Binding IsLoading}" Value="false" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="IsVisible" Value="True" />
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackLayout>
+        </Grid>
+
+        <!-- Loader control shown when loading -->
+        <controls:Loader Grid.Row="2" IsLoading="{Binding IsLoading}" />
+    </Grid>
+</ContentPage>
+    
+    

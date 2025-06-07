@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ContentPageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:base="clr-namespace:RoMock.Example.App.Views.Base"
+                       x:Class="RoMock.Example.App.Views.HomePage"
+                       Title="Home">
+
+    <VerticalStackLayout Padding="10" Spacing="10">
+        <Button Text="View List of Posts"
+                Command="{Binding NavigateToPostsCommand}"
+                TextColor="White"
+                FontSize="Medium"
+                HeightRequest="50"
+                CornerRadius="10" >
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#4C8BF5" Offset="0.0" />
+                    <GradientStop Color="#78C4F8" Offset="1.0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <Button Text="View List of Comments"
+                Command="{Binding NavigateToCommentsCommand}"
+                TextColor="White"
+                FontSize="Medium"
+                HeightRequest="50"
+                CornerRadius="10">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FFA000" Offset="0.0" />
+                    <GradientStop Color="#FBC02D" Offset="1.0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <Button Text="View List of ToDos"
+                Command="{Binding NavigateToToDosCommand}"
+                TextColor="White"
+                FontSize="Medium"
+                HeightRequest="50"
+                CornerRadius="10">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="MediumSeaGreen" Offset="0.0" />
+                    <GradientStop Color="LimeGreen" Offset="1.0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <Button Text="View List of Users"
+                Command="{Binding NavigateToUsersCommand}"
+                TextColor="White"
+                FontSize="Medium"
+                HeightRequest="50"
+                CornerRadius="10">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#E53935" Offset="0.0" />
+                    <GradientStop Color="#FF6F61" Offset="1.0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <VerticalStackLayout Spacing="5">
+            <Button Text="View Specific Post by ID"
+                    Command="{Binding NavigateToPostByIdCommand}"
+                    TextColor="White"
+                    FontSize="Medium"
+                    HeightRequest="50"
+                    CornerRadius="10">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#8E24AA" Offset="0.0" />
+                        <GradientStop Color="#AB47BC" Offset="1.0" /> 
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+            <Entry Placeholder="Enter Post ID"
+                   Text="{Binding PostId}"
+                   Keyboard="Numeric"
+                   BackgroundColor="White"
+                   TextColor="Black" />
+
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</base:ContentPageBase>
