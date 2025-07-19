@@ -149,7 +149,7 @@ jobs:
         sed 's|<Version>.*</Version>|<Version>'$NEXT_VERSION'</Version>|g' src/RoMock.Library/RoMock.Library.csproj > temp.csproj && mv temp.csproj src/RoMock.Library/RoMock.Library.csproj
         
         # Update the example project
-        sed 's|<PackageReference Include="RoMock\.Library" Version="[^"]*" />|<PackageReference Include="RoMock.Library" Version="'$NEXT_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
+        sed 's|<PackageReference Include="RoMock\.Maui" Version="[^"]*" />|<PackageReference Include="RoMock.Maui" Version="'$NEXT_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
         
         echo "Updated version to $NEXT_VERSION"
 

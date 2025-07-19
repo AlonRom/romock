@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- NuGet Package Properties -->
-		<PackageId>RoMock.Library</PackageId>
+		<PackageId>RoMock.Maui</PackageId>
 		<Version>0.1.0</Version>
 		<Authors>AlonRom</Authors>
 		<Company>AlonRom</Company>
