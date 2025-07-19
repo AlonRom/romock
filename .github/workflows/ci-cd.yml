@@ -1,5 +1,5 @@
 # CI/CD Pipeline for RoMock MAUI Library
-# This workflow handles building, testing, semantic versioning, and publishing
+# This workflow handles commit validation, building, testing, semantic versioning, and publishing
 
 name: CI/CD Pipeline
 
@@ -13,11 +13,15 @@ env:
   DOTNET_VERSION: '8.0.x'       # .NET version to use
 
 jobs:
-  # Job 1: Build and Test
-  # This job builds the solution and runs all tests
-  build-and-test:
-    name: Build and Test
+  # Job 1: Build, Test, and Release
+  # This job validates commits, builds the solution, runs tests, and handles releases
+  build-test-release:
+    name: Build, Test, and Release
     runs-on: ubuntu-latest      # Use Ubuntu runner for consistency
+    permissions:                 # Required permissions for semantic-release
+      contents: write
+      issues: write
+      pull-requests: write
     
     steps:
     # Step 1: Checkout the code
@@ -26,63 +30,83 @@ jobs:
       with:
         fetch-depth: 0          # Fetch full history for semantic versioning
 
-    # Step 2: Setup .NET environment
+    # Step 2: Validate commit messages (only for new commits, not merge commits)
+    - name: Validate commit messages
+      run: |
+        # Get all commits since last tag (excluding merge commits)
+        if git describe --tags --abbrev=0 2>/dev/null; then
+          # If tags exist, check commits since last tag
+          commits=$(git log --no-merges --pretty=format:"%H %s" $(git describe --tags --abbrev=0)..HEAD)
+        else
+          # If no tags, check all commits (excluding merge commits)
+          commits=$(git log --no-merges --pretty=format:"%H %s")
+        fi
+        
+        # If no commits found, exit successfully
+        if [ -z "$commits" ]; then
+          echo "✅ No commits to validate"
+          exit 0
+        fi
+        
+        # Check each commit message
+        while IFS= read -r line; do
+          if [ -n "$line" ]; then
+            commit_hash=$(echo "$line" | cut -d' ' -f1)
+            commit_msg=$(echo "$line" | cut -d' ' -f2-)
+            
+            # Check if commit message follows conventional format
+            if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+"; then
+              echo "❌ Invalid commit message: $commit_msg"
+              echo "   Commit: $commit_hash"
+              echo ""
+              echo "Commit messages must follow conventional commit format:"
+              echo "  feat: add new feature"
+              echo "  fix: resolve bug"
+              echo "  docs: update README"
+              echo "  feat!: breaking change"
+              echo ""
+              exit 1
+            else
+              echo "✅ Valid commit: $commit_msg"
+            fi
+          fi
+        done <<< "$commits"
+        
+        echo "✅ All commit messages are valid!"
+
+    # Step 3: Setup .NET environment
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Restore NuGet packages (only library and tests)
+    # Step 4: Restore NuGet packages (only library and tests)
     - name: Restore dependencies
       run: |
         dotnet restore src/RoMock.Library/RoMock.Library.csproj
         dotnet restore tests/RoMock.UnitTests/RoMock.UnitTests.csproj
 
-    # Step 4: Build the solution
+    # Step 5: Build the solution
     - name: Build solution
       run: |
         dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore
         dotnet build tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-restore
 
-    # Step 5: Run unit tests
+    # Step 6: Run unit tests
     - name: Run tests
       run: dotnet test tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-build
 
-  # Job 2: Semantic Versioning
-  # This job analyzes commit messages and determines the next version
-  semantic-version:
-    name: Semantic Versioning
-    runs-on: ubuntu-latest
-    needs: build-and-test        # Wait for build-and-test to complete
-    if: github.ref == 'refs/heads/main'  # Only run on main branch
-    permissions:                 # Required permissions for semantic-release
-      contents: write
-      issues: write
-      pull-requests: write
-    outputs:                     # Output variables for other jobs
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
-
-    steps:
-    # Step 1: Checkout with full history
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0          # Required for semantic versioning
-        token: ${{ secrets.GITHUB_TOKEN }}  # Token for creating releases
-        persist-credentials: false  # Don't persist credentials
-
-    # Step 2: Setup Node.js for semantic-release
+    # Step 7: Setup Node.js for semantic-release
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
 
-    # Step 3: Install npm dependencies
+    # Step 8: Install npm dependencies
     - name: Install dependencies
       run: npm install
 
-    # Step 4: Run semantic-release to analyze commits and create releases
+    # Step 9: Run semantic-release to analyze commits and create releases
     - name: Semantic Release
       id: semantic
       run: npx semantic-release
@@ -90,56 +114,24 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NODE_ENV: production
 
-  # Job 3: Build NuGet Package
-  # This job creates the NuGet package with the new version
-  build-package:
-    name: Build NuGet Package
-    runs-on: ubuntu-latest
-    needs: [build-and-test, semantic-version]  # Wait for both previous jobs
-    if: needs.semantic-version.outputs.new_release_published == 'true'  # Only run if a new release was created
-    
-    steps:
-    # Step 1: Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # Step 2: Setup .NET
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    # Step 3: Update version in the .csproj file
-    - name: Update version in csproj
-      run: sed -i 's/<Version>.*<\/Version>/<Version>${{ needs.semantic-version.outputs.new_release_version }}<\/Version>/g' src/RoMock.Library/RoMock.Library.csproj
-
-    # Step 4: Build the NuGet package
+    # Step 10: Build NuGet Package (only if new release was created)
     - name: Build NuGet package
-      run: dotnet pack src/RoMock.Library/RoMock.Library.csproj --configuration Release --output ./nupkgs
+      if: steps.semantic.outputs.new_release_published == 'true'
+      run: |
+        # Update version in the .csproj file
+        sed -i 's/<Version>.*<\/Version>/<Version>${{ steps.semantic.outputs.new_release_version }}<\/Version>/g' src/RoMock.Library/RoMock.Library.csproj
+        # Build the package
+        dotnet pack src/RoMock.Library/RoMock.Library.csproj --configuration Release --output ./nupkgs
 
-    # Step 5: Upload package as artifact for the publish job
+    # Step 11: Upload package as artifact (only if new release was created)
     - name: Upload NuGet package artifacts
+      if: steps.semantic.outputs.new_release_published == 'true'
       uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
         path: ./nupkgs/*.nupkg
 
-  # Job 4: Publish to NuGet
-  # This job publishes the package to NuGet.org
-  publish-nuget:
-    name: Publish to NuGet
-    runs-on: ubuntu-latest
-    needs: [semantic-version, build-package]  # Wait for semantic versioning and package build
-    if: needs.semantic-version.outputs.new_release_published == 'true'  # Only run if a new release was created
-    
-    steps:
-    # Step 1: Download the package artifact
-    - name: Download NuGet package artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: nuget-packages
-        path: ./nupkgs
-
-    # Step 2: Publish to NuGet.org
+    # Step 12: Publish to NuGet (only if new release was created)
     - name: Publish to NuGet
+      if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate 
