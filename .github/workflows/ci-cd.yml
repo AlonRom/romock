@@ -37,8 +37,8 @@ jobs:
     # Step 3: Restore NuGet packages (only library and tests)
     - name: Restore dependencies
       run: |
-        dotnet restore src/RoMock.Library/RoMock.Library.csproj --framework net8.0
-        dotnet restore tests/RoMock.UnitTests/RoMock.UnitTests.csproj --framework net8.0
+        dotnet restore src/RoMock.Library/RoMock.Library.csproj
+        dotnet restore tests/RoMock.UnitTests/RoMock.UnitTests.csproj
 
     # Step 4: Build the solution (only .NET 8.0, skip MAUI targets for now)
     - name: Build solution
