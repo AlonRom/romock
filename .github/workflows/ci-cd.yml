@@ -82,7 +82,18 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # Step 4: Run semantic-release to analyze commits and create releases
+    # Step 4: Debug - Show semantic-release configuration
+    - name: Debug - Show configuration
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "Files in current directory:"
+        ls -la
+        echo "Semantic-release config:"
+        cat .releaserc.json
+        echo "Package.json:"
+        cat package.json
+
+    # Step 5: Run semantic-release to analyze commits and create releases
     - name: Semantic Release
       id: semantic
       run: npx semantic-release
@@ -90,13 +101,21 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NODE_ENV: production
 
+    # Step 6: Debug - Show outputs
+    - name: Debug - Show outputs
+      run: |
+        echo "new_release_published: ${{ steps.semantic.outputs.new_release_published }}"
+        echo "new_release_version: ${{ steps.semantic.outputs.new_release_version }}"
+
   # Job 3: Build NuGet Package
   # This job creates the NuGet package with the new version
   build-package:
     name: Build NuGet Package
     runs-on: ubuntu-latest
     needs: [build-and-test, semantic-version]  # Wait for both previous jobs
-    if: needs.semantic-version.outputs.new_release_published == 'true'  # Only run if a new release was created
+    if: |
+      needs.semantic-version.outputs.new_release_published == 'true' || 
+      (needs.semantic-version.outputs.new_release_published == '' && github.ref == 'refs/heads/main')
     
     steps:
     # Step 1: Checkout code
@@ -117,7 +136,7 @@ jobs:
           sed -i "s/<Version>.*<\/Version>/<Version>$VERSION<\/Version>/g" src/RoMock.Library/RoMock.Library.csproj
           echo "Updated version to $VERSION"
         else
-          echo "No version available, using existing version"
+          echo "No version available from semantic-release, using existing version"
         fi
 
     # Step 4: Build the NuGet package
