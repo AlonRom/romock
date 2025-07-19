@@ -103,7 +103,7 @@ jobs:
     name: Build NuGet Package
     runs-on: ubuntu-latest
     needs: [build-and-test, semantic-version]  # Wait for both previous jobs
-    if: github.ref == 'refs/heads/main'  # Always run on main branch
+    if: github.ref == 'refs/heads/main'  # Only run on main branch
     
     steps:
     # Step 1: Checkout code
@@ -156,6 +156,13 @@ jobs:
         sed 's|<PackageReference Include="RoMock\.Maui" Version="[^"]*" />|<PackageReference Include="RoMock.Maui" Version="'$NEXT_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
         
         echo "Updated version to $NEXT_VERSION"
+        
+        # Commit the version changes back to the repository
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add src/RoMock.Library/RoMock.Library.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
+        git commit -m "chore: bump version to $NEXT_VERSION [skip ci]"
+        git push
 
     # Step 5: Build the project first
     - name: Build project
@@ -178,7 +185,7 @@ jobs:
     name: Publish to NuGet
     runs-on: ubuntu-latest
     needs: [semantic-version, build-package]  # Wait for semantic versioning and package build
-    if: github.ref == 'refs/heads/main'  # Always run on main branch
+    if: github.ref == 'refs/heads/main'  # Only publish from main branch
     
     steps:
     # Step 1: Download the package artifact
