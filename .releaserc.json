@@ -20,8 +20,6 @@
             "label": "NuGet Package"
           }
         ],
-        "successComment": true,
-        "failComment": true,
         "failTitle": false,
         "labels": false,
         "releasedLabels": false
