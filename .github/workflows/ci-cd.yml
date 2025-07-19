@@ -34,17 +34,21 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Restore NuGet packages
+    # Step 3: Restore NuGet packages (only library and tests)
     - name: Restore dependencies
-      run: dotnet restore RoMock.sln
+      run: |
+        dotnet restore src/RoMock.Library/RoMock.Library.csproj --framework net8.0
+        dotnet restore tests/RoMock.UnitTests/RoMock.UnitTests.csproj --framework net8.0
 
     # Step 4: Build the solution (only .NET 8.0, skip MAUI targets for now)
     - name: Build solution
-      run: dotnet build RoMock.sln --configuration Release --no-restore --framework net8.0
+      run: |
+        dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore --framework net8.0
+        dotnet build tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-restore --framework net8.0
 
     # Step 5: Run unit tests
     - name: Run tests
-      run: dotnet test RoMock.sln --configuration Release --no-build
+      run: dotnet test tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-build --framework net8.0
 
   # Job 2: Semantic Versioning
   # This job analyzes commit messages and determines the next version
