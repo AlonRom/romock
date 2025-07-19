@@ -14,7 +14,7 @@ A .NET MAUI library for mocking services and repositories with a simple and eleg
 ## 📦 Installation
 
 ```bash
-dotnet add package RoMock.Library
+dotnet add package RoMock.Maui
 ```
 
 ## 🛠️ Quick Start
@@ -107,4 +107,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 📊 Status
 
 [![CI/CD Pipeline](https://github.com/AlonRom/romock/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/AlonRom/romock/actions)
-[![NuGet](https://img.shields.io/nuget/v/RoMock.Library.svg)](https://www.nuget.org/packages/RoMock.Library/)
+[![NuGet](https://img.shields.io/nuget/v/RoMock.Maui.svg)](https://www.nuget.org/packages/RoMock.Maui/)
