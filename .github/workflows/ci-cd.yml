@@ -34,17 +34,13 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Install MAUI workloads
-    - name: Install MAUI workloads
-      run: dotnet workload install maui
-
-    # Step 4: Restore NuGet packages
+    # Step 3: Restore NuGet packages
     - name: Restore dependencies
       run: dotnet restore RoMock.sln
 
-    # Step 5: Build the solution
+    # Step 4: Build the solution (only .NET 8.0, skip MAUI targets for now)
     - name: Build solution
-      run: dotnet build RoMock.sln --configuration Release --no-restore
+      run: dotnet build RoMock.sln --configuration Release --no-restore --framework net8.0
 
     # Step 5: Run unit tests
     - name: Run tests
@@ -105,11 +101,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Install MAUI workloads
-    - name: Install MAUI workloads
-      run: dotnet workload install maui
-
-    # Step 4: Update version in the .csproj file
+    # Step 3: Update version in the .csproj file
     - name: Update version in csproj
       run: sed -i 's/<Version>.*<\/Version>/<Version>${{ needs.semantic-version.outputs.new_release_version }}<\/Version>/g' src/RoMock.Library/RoMock.Library.csproj
 
