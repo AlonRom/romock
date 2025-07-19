@@ -72,11 +72,10 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+		<PackageReference Include="RoMock.Maui" Version="0.1.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\src\RoMock.Library\RoMock.Library.csproj" />
-	</ItemGroup>
+
 
 	<ItemGroup>
 	  <MauiXaml Update="Controls\Loader.xaml">

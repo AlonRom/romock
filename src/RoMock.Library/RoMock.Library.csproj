@@ -16,6 +16,21 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+
+		<!-- NuGet Package Properties -->
+		<PackageId>RoMock.Maui</PackageId>
+		<Version>0.1.0</Version>
+		<Authors>Your Name</Authors>
+		<Company>Your Company</Company>
+		<Description>A .NET MAUI library for mocking services and repositories with a simple and elegant approach.</Description>
+		<PackageTags>maui;mock;testing;dependency-injection</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/yourusername/romock</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -42,6 +57,10 @@
 	  <None Update="Controls\Loader.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 
 </Project>
