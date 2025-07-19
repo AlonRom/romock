@@ -1,0 +1,14 @@
+{
+  "name": "romock",
+  "version": "0.1.0",
+  "description": "A .NET MAUI library for mocking services and repositories with semantic versioning",
+  "devDependencies": {
+    "semantic-release": "^21.1.2",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^10.0.4"
+  }
+} 

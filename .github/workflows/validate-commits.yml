@@ -1,0 +1,47 @@
+name: Validate Commit Messages
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-commits:
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Validate commit messages
+      run: |
+        # Get all commits in this PR
+        commits=$(git log --pretty=format:"%H %s" origin/main..HEAD)
+        
+        # Check each commit message
+        while IFS= read -r line; do
+          if [ -n "$line" ]; then
+            commit_hash=$(echo "$line" | cut -d' ' -f1)
+            commit_msg=$(echo "$line" | cut -d' ' -f2-)
+            
+            # Check if commit message follows conventional format
+            if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+"; then
+              echo "❌ Invalid commit message: $commit_msg"
+              echo "   Commit: $commit_hash"
+              echo ""
+              echo "Commit messages must follow conventional commit format:"
+              echo "  feat: add new feature"
+              echo "  fix: resolve bug"
+              echo "  docs: update README"
+              echo "  feat!: breaking change"
+              echo ""
+              exit 1
+            else
+              echo "✅ Valid commit: $commit_msg"
+            fi
+          fi
+        done <<< "$commits"
+        
+        echo "✅ All commit messages are valid!" 
