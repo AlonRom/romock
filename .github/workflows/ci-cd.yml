@@ -103,9 +103,7 @@ jobs:
     name: Build NuGet Package
     runs-on: ubuntu-latest
     needs: [build-and-test, semantic-version]  # Wait for both previous jobs
-    if: |
-      needs.semantic-version.outputs.new_release_published == 'true' || 
-      (needs.semantic-version.outputs.new_release_published == '' && github.ref == 'refs/heads/main')
+    if: github.ref == 'refs/heads/main'  # Always run on main branch
     
     steps:
     # Step 1: Checkout code
@@ -122,17 +120,20 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/RoMock.Library/RoMock.Library.csproj
 
-    # Step 4: Update version in the .csproj file using the semantic-release output
+    # Step 4: Update version in the .csproj file
     - name: Update version in csproj
       run: |
-        VERSION="${{ needs.semantic-version.outputs.new_release_version }}"
-        if [ -n "$VERSION" ]; then
-          sed 's|<Version>.*</Version>|<Version>'$VERSION'</Version>|g' src/RoMock.Library/RoMock.Library.csproj > temp.csproj && mv temp.csproj src/RoMock.Library/RoMock.Library.csproj
-          sed 's|<PackageReference Include="RoMock\.Library" Version="[^"]*" />|<PackageReference Include="RoMock.Library" Version="'$VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
-          echo "Updated version to $VERSION"
-        else
-          echo "No version available from semantic-release, using existing version"
-        fi
+        # Get the latest version from git tags
+        LATEST_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/v//' || echo "0.1.0")
+        echo "Latest version from git tags: $LATEST_VERSION"
+        
+        # Update the .csproj file
+        sed 's|<Version>.*</Version>|<Version>'$LATEST_VERSION'</Version>|g' src/RoMock.Library/RoMock.Library.csproj > temp.csproj && mv temp.csproj src/RoMock.Library/RoMock.Library.csproj
+        
+        # Update the example project
+        sed 's|<PackageReference Include="RoMock\.Library" Version="[^"]*" />|<PackageReference Include="RoMock.Library" Version="'$LATEST_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
+        
+        echo "Updated version to $LATEST_VERSION"
 
     # Step 5: Build the project first
     - name: Build project
@@ -155,7 +156,7 @@ jobs:
     name: Publish to NuGet
     runs-on: ubuntu-latest
     needs: [semantic-version, build-package]  # Wait for semantic versioning and package build
-    if: needs.semantic-version.outputs.new_release_published == 'true'  # Only run if a new release was created
+    if: github.ref == 'refs/heads/main'  # Always run on main branch
     
     steps:
     # Step 1: Download the package artifact
