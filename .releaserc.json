@@ -19,7 +19,13 @@
             "path": "nupkgs/*.nupkg",
             "label": "NuGet Package"
           }
-        ]
+        ],
+        "successComment": false,
+        "failComment": false,
+        "failTitle": false,
+        "labels": false,
+        "assignees": false,
+        "releasedLabels": false
       }
     ]
   ]
