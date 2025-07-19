@@ -1,4 +1,4 @@
-# RoMock.Maui
+# RoMock.Library
 
 A .NET MAUI library for mocking services and repositories with a simple and elegant approach.
 
@@ -12,7 +12,7 @@ A .NET MAUI library for mocking services and repositories with a simple and eleg
 ## Installation
 
 ```bash
-dotnet add package RoMock.Maui
+dotnet add package RoMock.Library
 ```
 
 ## Quick Start

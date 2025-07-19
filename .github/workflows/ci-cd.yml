@@ -82,30 +82,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # Step 4: Debug - Show semantic-release configuration
-    - name: Debug - Show configuration
-      run: |
-        echo "Current directory: $(pwd)"
-        echo "Files in current directory:"
-        ls -la
-        echo "Semantic-release config:"
-        cat .releaserc.json
-        echo "Package.json:"
-        cat package.json
-
-    # Step 5: Run semantic-release to analyze commits and create releases
+    # Step 4: Run semantic-release to analyze commits and create releases
     - name: Semantic Release
       id: semantic
       run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NODE_ENV: production
-
-    # Step 6: Debug - Show outputs
-    - name: Debug - Show outputs
-      run: |
-        echo "new_release_published: ${{ steps.semantic.outputs.new_release_published }}"
-        echo "new_release_version: ${{ steps.semantic.outputs.new_release_version }}"
 
   # Job 3: Build NuGet Package
   # This job creates the NuGet package with the new version
@@ -128,7 +111,11 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Update version in the .csproj file using the semantic-release output
+    # Step 3: Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore src/RoMock.Library/RoMock.Library.csproj
+
+    # Step 4: Update version in the .csproj file using the semantic-release output
     - name: Update version in csproj
       run: |
         VERSION="${{ needs.semantic-version.outputs.new_release_version }}"
@@ -139,11 +126,15 @@ jobs:
           echo "No version available from semantic-release, using existing version"
         fi
 
-    # Step 4: Build the NuGet package
+    # Step 5: Build the project first
+    - name: Build project
+      run: dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore
+
+    # Step 6: Build the NuGet package
     - name: Build NuGet package
       run: dotnet pack src/RoMock.Library/RoMock.Library.csproj --configuration Release --output ./nupkgs
 
-    # Step 5: Upload package as artifact for the publish job
+    # Step 7: Upload package as artifact for the publish job
     - name: Upload NuGet package artifacts
       uses: actions/upload-artifact@v4
       with:

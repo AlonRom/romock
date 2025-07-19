@@ -8,12 +8,10 @@ This document explains the complete CI/CD pipeline setup for the RoMock MAUI lib
 **Purpose**: The core GitHub Actions workflow that orchestrates the entire CI/CD process.
 
 **Key Features**:
-- **6 Jobs** that run in parallel and sequence
+- **4 Jobs** that run in parallel and sequence
 - **Cross-platform builds** (Windows, macOS, Linux)
 - **Automatic semantic versioning** based on commit messages
 - **NuGet package publishing** to NuGet.org
-- **Security scanning** with CodeQL
-- **Code coverage** reporting
 
 **Jobs Explained**:
 
@@ -53,25 +51,7 @@ This document explains the complete CI/CD pipeline setup for the RoMock MAUI lib
   1. Download package artifact
   2. Publish to NuGet.org using API key
 
-#### Job 5: `cross-platform-build`
-- **Purpose**: Ensures library builds on all target platforms
-- **Triggers**: Every push and PR
-- **Matrix**: Runs on Ubuntu, Windows, and macOS
-- **Steps**:
-  1. Setup .NET and MAUI workload
-  2. Build for all target frameworks:
-     - `net8.0` (standard .NET)
-     - `net8.0-android` (Android)
-     - `net8.0-ios` (iOS)
-     - `net8.0-maccatalyst` (Mac Catalyst)
-     - `net8.0-windows10.0.19041.0` (Windows)
 
-#### Job 6: `security-scan`
-- **Purpose**: Runs security analysis using GitHub's CodeQL
-- **Triggers**: Every push and PR
-- **Steps**:
-  1. Initialize CodeQL analysis for C#
-  2. Perform security scan
 
 ### 2. `.releaserc.json` - Semantic Release Configuration
 **Purpose**: Configures how semantic-release analyzes commits and creates releases.
@@ -98,12 +78,7 @@ This document explains the complete CI/CD pipeline setup for the RoMock MAUI lib
 - **What it does**: Handles npm package operations
 - **Configuration**: `npmPublish: false` (we publish to NuGet, not npm)
 
-#### `@semantic-release/git`
-- **What it does**: Updates files with new version and commits changes
-- **Files updated**:
-  - `CHANGELOG.md`
-  - `src/RoMock.Library/RoMock.Library.csproj`
-- **Commit message**: `chore(release): ${version} [skip ci]`
+
 
 #### `@semantic-release/github`
 - **What it does**: Creates GitHub releases and uploads assets
@@ -117,7 +92,6 @@ This document explains the complete CI/CD pipeline setup for the RoMock MAUI lib
 - `@semantic-release/commit-analyzer`: Analyzes commit messages
 - `@semantic-release/release-notes-generator`: Generates release notes
 - `@semantic-release/changelog`: Manages changelog file
-- `@semantic-release/git`: Updates files and commits changes
 - `@semantic-release/github`: Creates GitHub releases
 - `@semantic-release/npm`: Handles npm operations (disabled)
 
