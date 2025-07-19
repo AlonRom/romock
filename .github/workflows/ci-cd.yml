@@ -128,7 +128,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Step 3: Update version in the .csproj file
+    # Step 3: Update version in the .csproj file using the semantic-release output
     - name: Update version in csproj
       run: |
         VERSION="${{ needs.semantic-version.outputs.new_release_version }}"
