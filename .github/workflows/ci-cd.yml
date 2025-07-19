@@ -103,7 +103,7 @@ jobs:
     name: Build NuGet Package
     runs-on: ubuntu-latest
     needs: [build-and-test, semantic-version]  # Wait for both previous jobs
-    if: github.ref == 'refs/heads/main'  # Only run on main branch
+    if: github.ref == 'refs/heads/main' && needs.semantic-version.outputs.new_release_published == 'true'  # Only run on main branch when new version is published
     
     steps:
     # Step 1: Checkout code
@@ -123,48 +123,27 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/RoMock.Library/RoMock.Library.csproj
 
-    # Step 4: Update version in the .csproj file
+    # Step 4: Update version in the .csproj file using semantic-release output
     - name: Update version in csproj
       run: |
-        # Get the next version that semantic-release would create
-        # We need to analyze the commits to determine the next version
-        COMMIT_MSG=$(git log --oneline -1 --format="%s")
+        # Get the new version from semantic-release output
+        NEW_VERSION="${{ needs.semantic-version.outputs.new_release_version }}"
         
-        # Get current version from the csproj file instead of git tags
-        CURRENT_VERSION=$(grep -o '<Version>.*</Version>' src/RoMock.Library/RoMock.Library.csproj | sed 's/<Version>\(.*\)<\/Version>/\1/')
-        
-        echo "Current version from csproj: $CURRENT_VERSION"
-        echo "Commit message: $COMMIT_MSG"
-        
-        # Simple version bump logic based on commit message
-        if [[ "$COMMIT_MSG" == feat:* ]]; then
-          # Minor version bump
-          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
-          NEXT_VERSION="$major.$((minor + 1)).0"
-        elif [[ "$COMMIT_MSG" == fix:* ]]; then
-          # Patch version bump
-          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
-          NEXT_VERSION="$major.$minor.$((patch + 1))"
-        else
-          # No version bump needed
-          NEXT_VERSION="$CURRENT_VERSION"
-        fi
-        
-        echo "Next version: $NEXT_VERSION"
+        echo "New version to publish: $NEW_VERSION"
         
         # Update the .csproj file
-        sed 's|<Version>.*</Version>|<Version>'$NEXT_VERSION'</Version>|g' src/RoMock.Library/RoMock.Library.csproj > temp.csproj && mv temp.csproj src/RoMock.Library/RoMock.Library.csproj
+        sed 's|<Version>.*</Version>|<Version>'$NEW_VERSION'</Version>|g' src/RoMock.Library/RoMock.Library.csproj > temp.csproj && mv temp.csproj src/RoMock.Library/RoMock.Library.csproj
         
         # Update the example project
-        sed 's|<PackageReference Include="RoMock\.Maui" Version="[^"]*" />|<PackageReference Include="RoMock.Maui" Version="'$NEXT_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
+        sed 's|<PackageReference Include="RoMock\.Maui" Version="[^"]*" />|<PackageReference Include="RoMock.Maui" Version="'$NEW_VERSION'" />|g' example/RoMock.Example.App/RoMock.Example.App.csproj > temp.example.csproj && mv temp.example.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
         
-        echo "Updated version to $NEXT_VERSION"
+        echo "Updated version to $NEW_VERSION"
         
         # Commit the version changes back to the repository
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add src/RoMock.Library/RoMock.Library.csproj example/RoMock.Example.App/RoMock.Example.App.csproj
-        git commit -m "chore: bump version to $NEXT_VERSION [skip ci]"
+        git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
         git push
 
     # Step 5: Build the project first
@@ -188,7 +167,7 @@ jobs:
     name: Publish to NuGet
     runs-on: ubuntu-latest
     needs: [semantic-version, build-package]  # Wait for semantic versioning and package build
-    if: github.ref == 'refs/heads/main'  # Only publish from main branch
+    if: github.ref == 'refs/heads/main' && needs.semantic-version.outputs.new_release_published == 'true'  # Only publish from main branch when new version is published
     
     steps:
     # Step 1: Download the package artifact
