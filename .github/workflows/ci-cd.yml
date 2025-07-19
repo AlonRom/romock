@@ -126,7 +126,12 @@ jobs:
         # Get the next version that semantic-release would create
         # We need to analyze the commits to determine the next version
         COMMIT_MSG=$(git log --oneline -1 --format="%s")
-        CURRENT_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/v//' || echo "0.1.0")
+        
+        # Get current version from the csproj file instead of git tags
+        CURRENT_VERSION=$(grep -o '<Version>.*</Version>' src/RoMock.Library/RoMock.Library.csproj | sed 's/<Version>\(.*\)<\/Version>/\1/')
+        
+        echo "Current version from csproj: $CURRENT_VERSION"
+        echo "Commit message: $COMMIT_MSG"
         
         # Simple version bump logic based on commit message
         if [[ "$COMMIT_MSG" == feat:* ]]; then
@@ -142,7 +147,6 @@ jobs:
           NEXT_VERSION="$CURRENT_VERSION"
         fi
         
-        echo "Current version: $CURRENT_VERSION"
         echo "Next version: $NEXT_VERSION"
         
         # Update the .csproj file
