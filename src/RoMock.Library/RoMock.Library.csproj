@@ -7,7 +7,7 @@
 
 		<!-- NuGet Package Properties -->
 		<PackageId>RoMock.Maui</PackageId>
-		<Version>0.1.1</Version>
+		<Version>0.2.0</Version>
 		<Authors>AlonRom</Authors>
 		<Company>AlonRom</Company>
 		<Description>A .NET MAUI library for mocking services and repositories with a simple and elegant approach.</Description>
