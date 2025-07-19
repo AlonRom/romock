@@ -7,8 +7,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]          # Run on pushes to main branch
-  pull_request:
-    branches: [ main ]          # Run on PRs to main branch
 
 # Global environment variables
 env:
