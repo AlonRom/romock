@@ -40,15 +40,15 @@ jobs:
         dotnet restore src/RoMock.Library/RoMock.Library.csproj
         dotnet restore tests/RoMock.UnitTests/RoMock.UnitTests.csproj
 
-    # Step 4: Build the solution (only .NET 8.0, skip MAUI targets for now)
+    # Step 4: Build the solution
     - name: Build solution
       run: |
-        dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore --framework net8.0
-        dotnet build tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-restore --framework net8.0
+        dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore
+        dotnet build tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-restore
 
     # Step 5: Run unit tests
     - name: Run tests
-      run: dotnet test tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-build --framework net8.0
+      run: dotnet test tests/RoMock.UnitTests/RoMock.UnitTests.csproj --configuration Release --no-build
 
   # Job 2: Semantic Versioning
   # This job analyzes commit messages and determines the next version
