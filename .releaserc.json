@@ -6,6 +6,23 @@
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "sed -i 's/<Version>.*<\\/Version>/<Version>${nextRelease.version}<\\/Version>/g' src/RoMock.Library/RoMock.Library.csproj && sed -i 's/<PackageReference Include=\"RoMock\\.Library\" Version=\".*\" \\/>/<PackageReference Include=\"RoMock.Library\" Version=\"${nextRelease.version}\" \\/>/g' example/RoMock.Example.App/RoMock.Example.App.csproj"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "src/RoMock.Library/RoMock.Library.csproj",
+          "example/RoMock.Example.App/RoMock.Example.App.csproj",
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]"
+      }
+    ],
+    [
       "@semantic-release/npm",
       {
         "npmPublish": false
@@ -21,6 +38,6 @@
           }
         ]
       }
-    ]
+      ]
   ]
 } 

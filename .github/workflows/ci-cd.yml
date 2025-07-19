@@ -59,6 +59,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      id-token: write
     outputs:                     # Output variables for other jobs
       new_release_published: ${{ steps.semantic.outputs.new_release_published }}
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
@@ -115,26 +116,15 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/RoMock.Library/RoMock.Library.csproj
 
-    # Step 4: Update version in the .csproj file using the semantic-release output
-    - name: Update version in csproj
-      run: |
-        VERSION="${{ needs.semantic-version.outputs.new_release_version }}"
-        if [ -n "$VERSION" ]; then
-          sed -i "s/<Version>.*<\/Version>/<Version>$VERSION<\/Version>/g" src/RoMock.Library/RoMock.Library.csproj
-          echo "Updated version to $VERSION"
-        else
-          echo "No version available from semantic-release, using existing version"
-        fi
-
-    # Step 5: Build the project first
+    # Step 4: Build the project first
     - name: Build project
       run: dotnet build src/RoMock.Library/RoMock.Library.csproj --configuration Release --no-restore
 
-    # Step 6: Build the NuGet package
+    # Step 5: Build the NuGet package
     - name: Build NuGet package
       run: dotnet pack src/RoMock.Library/RoMock.Library.csproj --configuration Release --output ./nupkgs
 
-    # Step 7: Upload package as artifact for the publish job
+    # Step 6: Upload package as artifact for the publish job
     - name: Upload NuGet package artifacts
       uses: actions/upload-artifact@v4
       with:
