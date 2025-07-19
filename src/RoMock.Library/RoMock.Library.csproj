@@ -6,15 +6,15 @@
 		<Nullable>enable</Nullable>
 
 		<!-- NuGet Package Properties -->
-		<PackageId>RoMock.Maui</PackageId>
+		<PackageId>RoMock.Library</PackageId>
 		<Version>0.1.0</Version>
-		<Authors>Your Name</Authors>
-		<Company>Your Company</Company>
+		<Authors>AlonRom</Authors>
+		<Company>AlonRom</Company>
 		<Description>A .NET MAUI library for mocking services and repositories with a simple and elegant approach.</Description>
 		<PackageTags>maui;mock;testing;dependency-injection</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/yourusername/romock</RepositoryUrl>
+		<RepositoryUrl>https://github.com/AlonRom/romock</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
