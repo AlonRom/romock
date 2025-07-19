@@ -17,8 +17,14 @@ jobs:
 
     - name: Validate commit messages
       run: |
-        # Get all commits in this PR
-        commits=$(git log --pretty=format:"%H %s" origin/main..HEAD)
+        # Get all commits in this PR (excluding merge commits)
+        commits=$(git log --no-merges --pretty=format:"%H %s" origin/main..HEAD)
+        
+        # If no commits found, exit successfully
+        if [ -z "$commits" ]; then
+          echo "✅ No commits to validate (only merge commits found)"
+          exit 0
+        fi
         
         # Check each commit message
         while IFS= read -r line; do
